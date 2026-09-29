@@ -1,0 +1,13 @@
+# build artifacts
+build_output/
+*.bin
+*.hex
+*.elf
+*.uf2
+
+# macOS
+.DS_Store
+
+# python
+__pycache__/
+*.pyc
