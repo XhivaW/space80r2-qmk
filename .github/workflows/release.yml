@@ -14,6 +14,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install dfu-util
+        run: sudo apt-get update && sudo apt-get install -y dfu-util
+
       - name: Install ARM GCC (xPack)
         run: |
           mkdir -p $HOME/opt
