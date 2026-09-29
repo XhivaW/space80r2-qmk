@@ -4,6 +4,8 @@
 
 QMK / Vial firmware for the Graystudio **Space80 R2 "Apollo's Cyber Armor"**, with per-LED control (VialRGB) and a standard Windows default keymap.
 
+> Tested on macOS only; other platforms are unverified.
+
 ## Overview
 
 Built on open-source [vial-qmk](https://github.com/vial-kb/vial-qmk).

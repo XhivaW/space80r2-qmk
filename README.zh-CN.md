@@ -4,6 +4,8 @@
 
 Graystudio **Space80 R2 "Apollo's Cyber Armor"** 的 QMK / Vial 固件：支持逐颗灯珠控制（VialRGB），默认键位为标准 Windows 布局。
 
+> 仅在 macOS 下使用过，未验证其他平台。
+
 ## 概述
 
 基于开源 [vial-qmk](https://github.com/vial-kb/vial-qmk) 构建。
