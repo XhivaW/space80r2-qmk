@@ -12,7 +12,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install dfu-util
         run: sudo apt-get update && sudo apt-get install -y dfu-util
@@ -25,14 +25,14 @@ jobs:
           echo "$HOME/opt/xpack-arm-none-eabi-gcc-13.2.1-1.1/bin" >> $GITHUB_PATH
 
       - name: Checkout vial-qmk
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: vial-kb/vial-qmk
           ref: vial
           submodules: recursive
           path: vial-qmk
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
 
@@ -44,7 +44,7 @@ jobs:
           qmk compile -kb graystudio/apollo80_r2 -km vial
 
       - name: Publish release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: |
             vial-qmk/.build/graystudio_apollo80_r2_vial.bin
