@@ -1,0 +1,49 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install ARM GCC (xPack)
+        run: |
+          mkdir -p $HOME/opt
+          curl -L https://github.com/xpack-dev-tools/arm-none-eabi-gcc-xpack/releases/download/v13.2.1-1.1/xpack-arm-none-eabi-gcc-13.2.1-1.1-linux-x64.tar.gz \
+            | tar -xz -C $HOME/opt
+          echo "$HOME/opt/xpack-arm-none-eabi-gcc-13.2.1-1.1/bin" >> $GITHUB_PATH
+
+      - name: Checkout vial-qmk
+        uses: actions/checkout@v4
+        with:
+          repository: vial-kb/vial-qmk
+          ref: vial
+          submodules: recursive
+          path: vial-qmk
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Build firmware
+        working-directory: vial-qmk
+        run: |
+          python -m pip install -r requirements.txt qmk
+          cp -r $GITHUB_WORKSPACE/keyboards/graystudio keyboards/
+          qmk compile -kb graystudio/apollo80_r2 -km vial
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            vial-qmk/.build/graystudio_apollo80_r2_vial.bin
+            vial-qmk/.build/graystudio_apollo80_r2_vial.hex
+          generate_release_notes: true
