@@ -20,6 +20,28 @@
 // they are only overridden (white) by the Caps Lock indicator below.
 
 #include "quantum.h"
+#include "apollo80_r2.h"
+
+// Runtime LED region mask: a set bit hides that region.
+// Stored in the EEPROM user word, so it survives power cycles; 0 = all regions on.
+static uint8_t led_region_off_mask = 0;
+
+static inline uint8_t led_region_of(uint8_t idx) {
+    if (idx <= 5) return LED_REGION_BADGE;
+    if (idx <= 35) return LED_REGION_SIDES;
+    if (idx <= 53) return LED_REGION_BOTTOM;
+    return LED_REGION_SIDES;
+}
+
+void led_region_toggle(uint8_t region) {
+    led_region_off_mask ^= region;
+    eeconfig_update_user(led_region_off_mask);
+}
+
+void keyboard_post_init_kb(void) {
+    led_region_off_mask = (uint8_t)eeconfig_read_user() & (LED_REGION_BADGE | LED_REGION_BOTTOM | LED_REGION_SIDES);
+    keyboard_post_init_user();
+}
 
 #ifdef RGB_MATRIX_ENABLE
 led_config_t g_led_config = { {
@@ -57,9 +79,16 @@ led_config_t g_led_config = { {
 // Caps Lock indicator: light the badge strip (LEDs 0-5) in white.
 // Not locked: badge LEDs take part in the normal rgb_matrix effect.
 bool rgb_matrix_indicators_advanced_kb(uint8_t led_min, uint8_t led_max) {
-    if (!rgb_matrix_indicators_advanced_user(led_min, led_max)) {
-        return false;
+    rgb_matrix_indicators_advanced_user(led_min, led_max);
+
+    // Blank the LEDs of disabled regions after the effect has rendered.
+    for (uint8_t i = led_min; i < led_max; i++) {
+        if (led_region_off_mask & led_region_of(i)) {
+            rgb_matrix_set_color(i, 0, 0, 0);
+        }
     }
+
+    // Caps Lock has priority: light the badge white even when the region is off.
     if (host_keyboard_led_state().caps_lock) {
         for (uint8_t i = 0; i <= 5; i++) {
             if (i >= led_min && i < led_max) {

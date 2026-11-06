@@ -14,8 +14,9 @@ Graystudio **Space80 R2 "Apollo's Cyber Armor"** 的 QMK / Vial 固件：支持�
 - 逐颗灯珠控制：**VialRGB**（协议 + GUI Direct Control）
 - 默认键位：**标准 Windows（104/TKL 顺序）**
 - CapsLock 指示：铭牌排白光（LED 0-5）
+- 灯珠区域开关：Vial 自定义键码 `Badge` / `Bottom` / `Sides`（掉电保存）
 
-已实机验证：全部按键、Vial 识别、VialRGB（87 颗）、CapsLock 铭牌指示。
+已实机验证：全部按键、Vial 识别、VialRGB（87 颗）、CapsLock 铭牌指示、灯珠区域开关。
 
 ## 灯效
 
@@ -26,13 +27,28 @@ Graystudio **Space80 R2 "Apollo's Cyber Armor"** 的 QMK / Vial 固件：支持�
 层 0 为标准 Windows 104/TKL 顺序——`Ctrl Win Alt ... Alt Win Fn Ctrl`，右上三键 `PrtSc ScrLk Pause`，右侧编辑区 `Ins Home PgUp / Del End PgDn`，右下方向键。
 层 1（Fn，位于右 Alt 右侧）：灯效控制（`UG_*` / `RM_*`）、NKRO 切换、**QK_BOOT**、媒体键（右上 `VOLD/MUTE/VOLU`）、小键盘。
 
+## 灯珠区域开关
+
+Vial 的 **User** 页提供 3 个自定义键码：
+
+| 键码 | 灯珠 | 区域 |
+|---|---|---|
+| `Badge` | 0-5 | 铭牌 |
+| `Bottom` | 36-53 | 底边 |
+| `Sides` | 6-35 + 54-86 | 左右侧带 |
+
+在 Vial 里绑到任意键或层即可；按一下切换该区域开/关，状态写入 EEPROM，掉电保存。CapsLock 优先：铭牌区域关闭时，大写锁定仍会让铭牌亮白光。
+
+键码定义在 `keymaps/vial/keymap.c`，顺序必须与 `vial.json` 的 `customKeycodes` 一致。
+
 ## 目录结构
 
 ```
 space80r2-qmk/
 ├── keyboards/graystudio/apollo80_r2/    # 键盘定义（拷入 vial-qmk 树即可）
 │   ├── keyboard.json                    # MCU / 矩阵 / 灯驱动 / 动画开关
-│   ├── apollo80_r2.c                    # g_led_config（灯珠映射）+ CapsLock 钩子
+│   ├── apollo80_r2.c                    # g_led_config（灯珠映射）+ 区域掩码 + 指示灯
+│   ├── apollo80_r2.h                    # 灯珠区域宏 / 切换接口
 │   └── keymaps/vial/                    # keymap.c, config.h, rules.mk, vial.json
 ├── tools/
 │   ├── led_index_test.py                # 单颗点亮 / 扫描 / 恢复

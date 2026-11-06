@@ -14,8 +14,9 @@ Built on open-source [vial-qmk](https://github.com/vial-kb/vial-qmk).
 - Per-LED control: **VialRGB** (protocol + GUI Direct Control)
 - Default keymap: **standard Windows (104/TKL order)**
 - Caps Lock indicator: badge strip (LEDs 0-5) in white
+- LED regions: Vial custom keycodes `Badge` / `Bottom` / `Sides` (EEPROM-persisted)
 
-Verified working on hardware: all keys, Vial recognition, VialRGB (87 LEDs), Caps Lock badge indicator.
+Verified working on hardware: all keys, Vial recognition, VialRGB (87 LEDs), Caps Lock badge indicator, LED region toggles.
 
 ## Effects
 
@@ -26,13 +27,28 @@ Verified working on hardware: all keys, Vial recognition, VialRGB (87 LEDs), Cap
 Layer 0 is the standard Windows 104/TKL order — `Ctrl Win Alt ... Alt Win Fn Ctrl`, `PrtSc ScrLk Pause` top-right, `Ins Home PgUp / Del End PgDn` column, arrows bottom-right.
 Layer 1 (Fn, right of Right-Alt): lighting controls (`UG_*` / `RM_*`), NKRO toggle, **QK_BOOT**, media keys (`VOLD/MUTE/VOLU` top-right), numpad.
 
+## LED region toggles
+
+Three Vial custom keycodes are available in the **User** tab:
+
+| Keycode | LEDs | Region |
+|---|---|---|
+| `Badge` | 0-5 | badge strip |
+| `Bottom` | 36-53 | bottom edge |
+| `Sides` | 6-35 + 54-86 | left and right side bands |
+
+Assign them to any key or layer in Vial. Pressing one toggles that region on/off; the mask is persisted in EEPROM. Caps Lock has priority: the badge still lights white when its region is off.
+
+The keycodes are declared in `keymaps/vial/keymap.c`, and their order must match `customKeycodes` in `vial.json`.
+
 ## Repository layout
 
 ```
 space80r2-qmk/
 ├── keyboards/graystudio/apollo80_r2/    # keyboard definition (drop into a vial-qmk tree)
 │   ├── keyboard.json                    # MCU / matrix / LED driver / animations
-│   ├── apollo80_r2.c                    # g_led_config (LED map) + Caps Lock hook
+│   ├── apollo80_r2.c                    # g_led_config (LED map) + region mask + indicators
+│   ├── apollo80_r2.h                    # LED region macros / toggle API
 │   └── keymaps/vial/                    # keymap.c, config.h, rules.mk, vial.json
 ├── tools/
 │   ├── led_index_test.py                # light a single LED / scan / restore

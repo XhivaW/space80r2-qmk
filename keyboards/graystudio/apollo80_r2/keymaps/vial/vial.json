@@ -3,6 +3,11 @@
   "vendorId": "0x4753",
   "productId": "0x3080",
   "lighting": "vialrgb",
+  "customKeycodes": [
+    { "name": "LED Badge", "title": "Toggle badge LED region", "shortName": "Badge" },
+    { "name": "LED Bottom", "title": "Toggle bottom LED region", "shortName": "Bottom" },
+    { "name": "LED Sides", "title": "Toggle side LED regions", "shortName": "Sides" }
+  ],
   "matrix": {
     "rows": 6,
     "cols": 17
